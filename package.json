@@ -1,0 +1,25 @@
+{
+  "name": "typescript-cli-starter",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A simple and zero-opinion typescript starter template for building cross-platform command line applications.",
+  "author": "Khalid Zoabi <kzoabi@outlook.com>",
+  "license": "MIT",
+  "main": "./dist/main.js",
+  "files": [
+    "dist/**/*",
+    "!dist/**/*.test.js"
+  ],
+  "scripts": {
+    "run": "./node_modules/ts-node/dist/bin.js src/main.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "@types/nodemailer": "^6.4.14"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^3.5.3"
+  }
+}
