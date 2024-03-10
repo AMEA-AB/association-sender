@@ -9,6 +9,34 @@ import settings from '../settings';
 
 type Source = 'rbok' | 'ibgo' | 'actorSmartbook';
 
+async function writeMunicipalitySources(file: string) {
+    const municipalitySources: Record<string, string | undefined> = {};
+    for(let i = 0; i < municipalities.length; i++) {
+        let municipality = municipalities[i];
+        municipality = municipality
+            .replace(/Å/g, 'A')
+            .replace(/Ä/g, 'A')
+            .replace(/Ö/g, 'O')
+            .replace(/å/g, 'a')
+            .replace(/ä/g, 'a')
+            .replace(/ö/g, 'o')
+            .replace(/ /g, '-');
+        if(await RbokSource.hasRbok(municipality)) {
+            municipalitySources[municipality] = 'rbok';
+        }
+        else if(await IbgoSource.hasIbgo(municipality)) {
+            municipalitySources[municipality] = 'ibgo';
+        }
+        else if(await ActorSmartbookSource.hasActorSmartbook(municipality)) {
+            municipalitySources[municipality] = 'actorSmartbook';
+        } else {
+            municipalitySources[municipality] = null;
+        }
+    }
+    const fileService = new FileService();
+    fileService.saveJsonToFile(file, municipalitySources);
+}
+
 async function populate(sources: Source[] = [], exclude: string[] = []) {
     const fileService = new FileService();
     let emails: string[] = fileService.loadJsonFromFile<string[]>(settings.addressesFile);
@@ -66,4 +94,8 @@ send().catch((error) => {
 
 /* populate(['actorSmartbook']).catch((error) => {
     console.error('Error in populate:', inspect(error));
+}); */
+
+/* writeMunicipalitySources(`${settings.dataFolder}/municipalities.json`).catch((error) => {
+    console.error('Error in writing municipality sources:', inspect(error));
 }); */
