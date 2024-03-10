@@ -3,10 +3,11 @@ import municipalities from './assets/municipalities.json'
 import MailService from './services/mail-service';
 import RbokSource from './sources/rbok-source';
 import IbgoSource from './sources/ibgo-source';
+import ActorSmartbookSource from './sources/actorsmartbook-source';
 import FileService from './services/file-service';
 import settings from '../settings';
 
-type Source = 'rbok' | 'ibgo';
+type Source = 'rbok' | 'ibgo' | 'actorSmartbook';
 
 async function populate(sources: Source[] = [], exclude: string[] = []) {
     const fileService = new FileService();
@@ -27,17 +28,24 @@ async function populate(sources: Source[] = [], exclude: string[] = []) {
         }
         if (sources.includes('rbok')) {
             if(await RbokSource.hasRbok(municipality)) {
-                const rbokService = new RbokSource(municipality);
-                const rbokEmails = await rbokService.getEmails();
+                const rbokSource = new RbokSource(municipality);
+                const rbokEmails = await rbokSource.getEmails();
                 emails.push(...rbokEmails);
             }
         }
 
         if (sources.includes('ibgo')) {
             if(await IbgoSource.hasIbgo(municipality)) {
-                const ibgoService = new IbgoSource(municipality);
-                const ibgoEmails = await ibgoService.getEmails();
+                const ibgoSource = new IbgoSource(municipality);
+                const ibgoEmails = await ibgoSource.getEmails();
                 emails.push(...ibgoEmails);
+            }
+        }
+        if (sources.includes('actorSmartbook')) {
+            if(await ActorSmartbookSource.hasActorSmartbook(municipality)) {
+                const actorSmartbookSource = new ActorSmartbookSource(municipality);
+                const actorSmartbookEmails = await actorSmartbookSource.getEmails();
+                emails.push(...actorSmartbookEmails);
             }
         }
     }
@@ -56,6 +64,6 @@ send().catch((error) => {
     console.error('Error in sending emails:', inspect(error));
 });
 
-/* populate(['ibgo']).catch((error) => {
+/* populate(['actorSmartbook']).catch((error) => {
     console.error('Error in populate:', inspect(error));
 }); */
