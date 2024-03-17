@@ -36,7 +36,8 @@ export default class MailService {
         }
         this.fileService.saveJsonToFile(this.settings.sentFile, sentMails);
         this.fileService.saveJsonToFile(this.settings.addressesFile, mails);
-        console.log(`DONE - Sent ${sent} mails`);
+        const currentTime = new Date();
+        console.log(`DONE - Sent ${sent} mails`, currentTime);
     }
 
     public async sendMail(to: string) {
