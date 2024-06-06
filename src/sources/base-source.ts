@@ -19,7 +19,7 @@ class BaseSource {
     }
 
     public static isSiteUp(url: string): Promise<boolean> {
-        return new Promise((resolve) => {
+        return new Promise<boolean>((resolve) => {
             const req = https.get(url, function (res) {
                 return resolve(res.statusCode >= 200 && res.statusCode < 300);
             });
@@ -31,7 +31,7 @@ class BaseSource {
             req.setTimeout(2000, function() {
                 req.destroy();
             });
-        });
+        }).catch(() => false);
     }
 }
 
