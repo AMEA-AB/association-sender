@@ -14,10 +14,12 @@
     "run": "./node_modules/ts-node/dist/bin.js src/main.ts"
   },
   "devDependencies": {
+    "@types/jsdom": "^21.1.6",
     "@types/node": "^20.11.24",
     "@types/nodemailer": "^6.4.14"
   },
   "dependencies": {
+    "jsdom": "^24.0.0",
     "nodemailer": "^6.9.11",
     "ts-node": "^10.9.2",
     "typescript": "^3.5.3"

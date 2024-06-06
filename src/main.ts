@@ -4,10 +4,24 @@ import MailService from './services/mail-service';
 import RbokSource from './sources/rbok-source';
 import IbgoSource from './sources/ibgo-source';
 import ActorSmartbookSource from './sources/actorsmartbook-source';
+import FriwebSource from './sources/friweb-source';
 import FileService from './services/file-service';
 import settings from '../settings';
 
-type Source = 'rbok' | 'ibgo' | 'actorSmartbook';
+type Source = 'rbok' | 'ibgo' | 'actorSmartbook' | 'friweb';
+
+async function testSource() {
+    const municipality = 'staffanstorp';
+    const hasSource = await FriwebSource.hasFriweb(municipality);
+    if(hasSource) {
+        console.log('Has source');
+        const friwebSource = new FriwebSource(municipality);
+        const emails = await friwebSource.getEmails();
+        console.log(emails);
+    }else {
+        console.log('No source');
+    }
+}
 
 async function writeMunicipalitySources(file: string) {
     const municipalitySources: Record<string, string | undefined> = {};
@@ -29,7 +43,11 @@ async function writeMunicipalitySources(file: string) {
         }
         else if(await ActorSmartbookSource.hasActorSmartbook(municipality)) {
             municipalitySources[municipality] = 'actorSmartbook';
-        } else {
+        }
+        else if(await FriwebSource.hasFriweb(municipality)) {
+            municipalitySources[municipality] = 'friweb';
+        }
+        else {
             municipalitySources[municipality] = null;
         }
     }
@@ -76,6 +94,13 @@ async function populate(sources: Source[] = [], exclude: string[] = []) {
                 emails.push(...actorSmartbookEmails);
             }
         }
+        if (sources.includes('friweb')) {
+            if(await FriwebSource.hasFriweb(municipality)) {
+                const friwebSource = new FriwebSource(municipality);
+                const friwebEmails = await friwebSource.getEmails();
+                emails.push(...friwebEmails);
+            }
+        }
     }
 
     emails = [...new Set(emails)].filter((mail) => !exclude.includes(mail));
@@ -98,4 +123,8 @@ send().catch((error) => {
 
 /* writeMunicipalitySources(`${settings.dataFolder}/municipalities.json`).catch((error) => {
     console.error('Error in writing municipality sources:', inspect(error));
+}); */
+
+/* testSource().catch((error) => {
+    console.error('Error in test source:', inspect(error));
 }); */
